@@ -11,7 +11,7 @@ def highlight_differences(sheet, row1, row2, output_row, highlight_color="52C58C
             output_cell.font = Font(color="FF0000")  # 赤文字に設定
         else:
             output_cell = sheet.cell(row=output_row, column=i + 1)
-            output_cell.value = cell2        
+            output_cell.value = cell2         
 
 # メイン処理を実行する関数
 def main():
@@ -31,20 +31,21 @@ def main():
     data2 = [row for row in sheet2.iter_rows(values_only=True)]
     
     # 出力先のエクセルを作成
-    output_workbook = openpyxl.Workbook()
+    output_workbook = workbook2
     output_sheet = output_workbook.active
     
     # file2で挿入されている行を確認し、file1に空白の行を挿入する
     for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
         found = False
+        # 挿入されている行を確認
         if row_data2[0] == None:
             found = True
+        # file2で挿入されている行と同一の行に空白行を挿入する
+        if found:
+            data1.insert(row_num - 1, [''] * len(row_data2))
+        # 最後まで確認終えたら終了
         if row_data2[0] == 'end':
             break
-
-        if found:
-            # file1に対応する行がない場合、空白行を挿入してfile1とfile2の行数を同じにする
-            data1.insert(row_num - 1, [''] * len(row_data2))
 
     # 変化点を検出して出力先のエクセルに書き込み
     for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
