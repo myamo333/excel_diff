@@ -1,13 +1,17 @@
 import openpyxl
-from openpyxl.styles import PatternFill
+from openpyxl.styles import PatternFill, Font
 
 # 変化点を検出して出力先のエクセルに色付ける関数
-def highlight_differences(sheet, row1, row2, output_row, highlight_color="FFFF00"):
+def highlight_differences(sheet, row1, row2, output_row, highlight_color="52C58C"):
     for i, (cell1, cell2) in enumerate(zip(row1, row2)):
         if cell1 != cell2:
             output_cell = sheet.cell(row=output_row, column=i + 1)
             output_cell.value = cell2
             output_cell.fill = PatternFill(start_color=highlight_color, end_color=highlight_color, fill_type="solid")
+            output_cell.font = Font(color="FF0000")  # 赤文字に設定
+        else:
+            output_cell = sheet.cell(row=output_row, column=i + 1)
+            output_cell.value = cell2        
 
 # メイン処理を実行する関数
 def main():
