@@ -34,6 +34,18 @@ def main():
     output_workbook = openpyxl.Workbook()
     output_sheet = output_workbook.active
     
+    # file2で挿入されている行を確認し、file1に空白の行を挿入する
+    for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
+        found = False
+        if row_data2[0] == None:
+            found = True
+        if row_data2[0] == 'end':
+            break
+
+        if found:
+            # file1に対応する行がない場合、空白行を挿入してfile1とfile2の行数を同じにする
+            data1.insert(row_num - 1, [''] * len(row_data2))
+
     # 変化点を検出して出力先のエクセルに書き込み
     for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
         if row_data1 != row_data2:
