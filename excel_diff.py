@@ -4,7 +4,13 @@ from openpyxl.styles import PatternFill, Font
 # 変化点を検出して出力先のエクセルに色付ける関数
 def highlight_differences(sheet, row1, row2, output_row, highlight_color="52C58C"):
     for i, (cell1, cell2) in enumerate(zip(row1, row2)):
-        if cell1 != cell2:
+        if isinstance(cell1, openpyxl.cell.cell.Cell) and isinstance(cell2, openpyxl.cell.cell.Cell):
+            cell1_value = str(cell1.value) if cell1.value is not None else ""
+            cell2_value = str(cell2.value) if cell2.value is not None else ""
+        else:
+            cell1_value = str(cell1) if cell1 is not None else ""
+            cell2_value = str(cell2) if cell2 is not None else ""
+        if cell1_value != cell2_value:
             output_cell = sheet.cell(row=output_row, column=i + 1)
             output_cell.value = cell2
             output_cell.fill = PatternFill(start_color=highlight_color, end_color=highlight_color, fill_type="solid")
@@ -12,6 +18,24 @@ def highlight_differences(sheet, row1, row2, output_row, highlight_color="52C58C
         else:
             output_cell = sheet.cell(row=output_row, column=i + 1)
             output_cell.value = cell2         
+
+# 変化点を検出して2つのエクセルをマージして出力し、エクセルに色付ける関数
+def highlight_differences2(sheet, row1, row2, output_row, highlight_color="52C58C"):
+    for i, (cell1, cell2) in enumerate(zip(row1, row2)):
+        if isinstance(cell1, openpyxl.cell.cell.Cell) and isinstance(cell2, openpyxl.cell.cell.Cell):
+            cell1_value = str(cell1.value) if cell1.value is not None else ""
+            cell2_value = str(cell2.value) if cell2.value is not None else ""
+        else:
+            cell1_value = str(cell1) if cell1 is not None else ""
+            cell2_value = str(cell2) if cell2 is not None else ""
+        if cell1_value != cell2_value:
+            output_cell = sheet.cell(row=output_row, column=i + 1)
+            output_cell.value = f"{cell1_value}\n↓\n{cell2_value}"  # セルの値を結合
+            output_cell.fill = PatternFill(start_color=highlight_color, end_color=highlight_color, fill_type="solid")
+            output_cell.font = Font(color="FF0000")  # 赤文字に設定
+        else:
+            output_cell = sheet.cell(row=output_row, column=i + 1)
+            output_cell.value = cell2     
 
 # メイン処理を実行する関数
 def main():
@@ -33,7 +57,6 @@ def main():
     # 出力先のエクセルを作成
     output_workbook = workbook2
     output_sheet = output_workbook.active
-    
     # file2で挿入されている行を確認し、file1に空白の行を挿入する
     for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
         found = False
@@ -51,6 +74,7 @@ def main():
     for row_num, (row_data1, row_data2) in enumerate(zip(data1, data2), start=1):
         if row_data1 != row_data2:
             highlight_differences(output_sheet, row_data1, row_data2, row_num)
+            # highlight_differences2(output_sheet, row_data1, row_data2, row_num)
     
     # 出力先のエクセルを保存
     output_workbook.save(result)
