@@ -1,6 +1,7 @@
 import openpyxl
 from openpyxl.styles import PatternFill, Font
 #test
+#test
 # 変化点を検出して出力先のエクセルに色付ける関数
 def highlight_differences(sheet, row1, row2, output_row, highlight_color="52C58C"):
     for i, (cell1, cell2) in enumerate(zip(row1, row2)):
